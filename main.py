@@ -27,8 +27,8 @@ df_sixth_function = pd.read_csv('03_datasets_proyecto_01/sixth_function_file_one
 #First_function: def userdata( User_id : str ): Debe devolver cantidad de dinero gastado por el usuario, 
 #                el porcentaje de recomendación en base a reviews.recommend y cantidad de items.
 
-@app.get("/userdata/{user_id}")
-async def userdata(user_id:str):
+@app.get('/userdata/{user_id}')
+def userdata(user_id:str):
     # Busca el 'user_id' en el DataFrame
     filter_df_first_function_file_one = df_first_function_file_one[df_first_function_file_one['user_id'] == user_id]
     # Si no se encuentra el 'user_id', devuelve None
@@ -46,13 +46,10 @@ async def userdata(user_id:str):
     
     return {'spent_Money': price_float_column, 'items_count': items_count, 'percentage_recommend': porcentaje_recommend}
 
-    
-print(userdata('76561198070565427'))
-
 #Second function: def countreviews( YYYY-MM-DD y YYYY-MM-DD : str ): Cantidad de usuarios que realizaron 
 #                 reviews entre las fechas dadas y, el porcentaje de recomendación de los mismos en base a reviews.recommend.
 
-@app.get("/countreview/{start_date}/{final_date}")
+@app.get('/countreviews/{start_date}/{final_date}')
 def countreviews (start_date:str, final_date:str):
     # Convierte la columna de fecha en tipo datetime
     df_second_function['new_date_format'] = pd.to_datetime(df_second_function['new_date_format'])
@@ -74,24 +71,19 @@ def countreviews (start_date:str, final_date:str):
     # Imprime el conteo de valores únicos
     return {'count_user_review':count_user_id, 'percentage recommend': percentage_recommend}
 
-
-print(countreviews('2012-01-01', '2023-06-01'))
-
 # #Third Function: def genre( género : str ): Devuelve el puesto en el que se encuentra un género
 # #               sobre el ranking de los mismos analizado bajo la columna PlayTimeForever.
 
-@app.get("/genre/{genres}")
+@app.get('/genre/{genres}')
 def genre (genres:str):
     # Utiliza explode() para convertir las listas en filas individuales
     index_third_function = df_third_function[df_third_function['genres'] == genres].index[0] + 1
     return {'game_ranking': index_third_function}
 
-print(genre('Adventure'))
-
 # # Fourth Function: def userforgenre( género : str ): Top 5 de usuarios con más horas de juego en el género dado, 
 # #                  con su URL (del user) y user_id.
 
-@app.get("/userforgenre/{genre}")
+@app.get('/userforgenre/{genre}')
 def userforgenre(genre:str):
 # Filtra por el género deseado
     filtered_df = df_fourth_function[df_fourth_function['genres'] == genre]
@@ -105,12 +97,10 @@ def userforgenre(genre:str):
 
     return {'user_id': top_5_users_list, 'user_url': top_5_users_url_list}
 
-print(userforgenre('Action'))
-
 # # Fifth_Function: def developer( desarrollador : str ): Cantidad de items y porcentaje de contenido Free por año
 # #                                según empresa desarrolladora. Ejemplo de salida:
 
-@app.get("/developer/{developer_parameter}")
+@app.get('/developer/{developer_parameter}')
 def developer(developer_parameter:str):
     df_developer = df_fifth_function.copy()
 # Filtra el DataFrame por la desarrolladora especificada
@@ -150,13 +140,11 @@ def developer(developer_parameter:str):
     # Imprime el diccionario resultante
     return data_dict
 
-print(developer('Activision'))
-
 # # Sixth_Function: def sentiment_analysis( año : int ): Según el año de lanzamiento, se devuelve una lista
 #                   con la cantidad de registros de reseñas de usuarios que se encuentren categorizados con
 #                   un análisis de sentimiento.
 
-@app.get("/sentiment_analysis/{year}")
+@app.get('/sentiment_analysis/{year}')
 def sentiment_analysis(year:int):
     # Filtrar por el año deseado
     df_filtrado = df_sixth_function[df_sixth_function['year'] == year]
@@ -166,5 +154,3 @@ def sentiment_analysis(year:int):
     positive = df_filtrado['review'].value_counts().get(2, 0)
 
     return {'Negative': negative, 'Neutral': neutral, 'Positive': positive}
-
-print(sentiment_analysis(2011))
