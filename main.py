@@ -77,8 +77,9 @@ def countreviews (start_date:str, final_date:str):
 @app.get('/genre/{genres}')
 def genre (genres:str):
     # Utiliza explode() para convertir las listas en filas individuales
-    index_third_function = df_third_function[df_third_function['genres'] == genres].index[0] + 1
-    return {'game_ranking': index_third_function}
+    filter_third_function = df_third_function[df_third_function['genres'] == genres]
+    game_ranking = filter_third_function['ranking'].values[0]
+    return {'game_ranking': game_ranking}
 
 # # Fourth Function: def userforgenre( género : str ): Top 5 de usuarios con más horas de juego en el género dado, 
 # #                  con su URL (del user) y user_id.
@@ -148,9 +149,9 @@ def developer(developer_parameter:str):
 def sentiment_analysis(year:int):
     # Filtrar por el año deseado
     df_filtrado = df_sixth_function[df_sixth_function['year'] == year]
-
-    negative = df_filtrado['review'].value_counts().get(0, 0)
-    neutral = df_filtrado['review'].value_counts().get(1, 0)
-    positive = df_filtrado['review'].value_counts().get(2, 0)
+    
+    negative = df_filtrado[df_filtrado['review'] == 0].shape[0]
+    neutral = df_filtrado[df_filtrado['review'] == 1].shape[0]
+    positive = df_filtrado[df_filtrado['review'] == 2].shape[0]
 
     return {'Negative': negative, 'Neutral': neutral, 'Positive': positive}
