@@ -1,5 +1,7 @@
 import pandas as pd
 from fastapi import FastAPI
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 #FastAPI
 app = FastAPI()
@@ -23,6 +25,9 @@ df_fifth_function = pd.read_csv('03_datasets_proyecto_01/fifth_function_file_one
 
 # Cargar los archivos para la sexta funcion
 df_sixth_function = pd.read_csv('03_datasets_proyecto_01/sixth_function_file_one.csv')
+
+# Cargar los archivos para la funcion del modelo de machine learning
+df_model_machine_learning = pd.read_csv('03_datasets_proyecto_01/model_machine_learning_file_one.csv')
 
 #First_function: def userdata( User_id : str ): Debe devolver cantidad de dinero gastado por el usuario, 
 #                el porcentaje de recomendación en base a reviews.recommend y cantidad de items.
@@ -155,3 +160,31 @@ def sentiment_analysis(year:int):
     positive = df_filtrado[df_filtrado['review'] == 2].shape[0]
 
     return {'Negative': negative, 'Neutral': neutral, 'Positive': positive}
+
+@app.get('/get_similar_games/{game_id}')
+def get_similar_games(game_id:int):
+    df_model_machine_learning['tags'] = df_model_machine_learning['tags'].apply(lambda x: eval(x))
+    num_recommendations=5
+    # Obtener las etiquetas del juego de referencia
+    tags = df_model_machine_learning.loc[df_model_machine_learning['id'] == game_id, 'tags'].iloc[0]
+
+    # Crear una matriz de características basada en las etiquetas
+    vectorizer = CountVectorizer()
+    tag_matrix = vectorizer.fit_transform(df_model_machine_learning['tags'].apply(lambda x: ' '.join(x)))
+
+    # Calcular la similitud coseno entre juegos basada en las etiquetas
+    similarity_scores = cosine_similarity(tag_matrix)
+
+    # Obtener el índice del juego de referencia
+    game_index = df_model_machine_learning[df_model_machine_learning['id'] == game_id].index[0]
+
+    # Obtener las puntuaciones de similitud para el juego de referencia
+    game_similarity_scores = similarity_scores[game_index]
+
+    # Obtener los índices de los juegos más similares (excluyendo el juego de referencia)
+    similar_game_indices = game_similarity_scores.argsort()[::-1][1:num_recommendations+1]
+
+    # Obtener la lista de juegos recomendados
+    recommended_games = df_model_machine_learning.iloc[similar_game_indices]['title'].tolist()
+
+    return {'recommended_games': recommended_games}
