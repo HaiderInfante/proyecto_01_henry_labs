@@ -100,6 +100,7 @@ def genre (genres:str):
 @app.get('/userforgenre/{genre}')
 def userforgenre(genre:str):
 # Filtra por el género deseado
+    df_fourth_function = pd.read_csv('03_datasets_proyecto_01/fourth_function_file_one.csv')
     genero_buscado = genre.lower()
 
     # Filtrar el DataFrame por género (insensible a mayúsculas/minúsculas)
