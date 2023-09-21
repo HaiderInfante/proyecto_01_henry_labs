@@ -87,7 +87,7 @@ def genre (genres:str):
         df_third_function['genres'] = df_third_function['genres'].str.lower()
         row = df_third_function[df_third_function['genres'] == genres]
         ranking = row['ranking'].values[0]
-        return ranking
+        return {'ranking': ranking}
     except IndexError:
         return "Género no encontrado"
 
