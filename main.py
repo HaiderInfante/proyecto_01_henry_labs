@@ -100,16 +100,23 @@ def genre (genres:str):
 @app.get('/userforgenre/{genre}')
 def userforgenre(genre:str):
 # Filtra por el género deseado
-    filtered_df = df_fourth_function[df_fourth_function['genres'] == genre]
+    genero_buscado = genre.lower()
 
-    # Ordena el DataFrame filtrado por 'playtime_forever' en orden descendente
-    sorted_df = filtered_df.sort_values(by='playtime_forever', ascending=False)
+    # Filtrar el DataFrame por género (insensible a mayúsculas/minúsculas)
+    filtered_df = df_fourth_function[df_fourth_function['genres'].str.lower() == genero_buscado]
 
-    # Toma los primeros 5 usuarios y almacénalos en una lista
-    top_5_users_list = sorted_df.head(5)['user_id'].tolist()
-    top_5_users_url_list = sorted_df.head(5)['user_url'].tolist()
+    # Verifica si el género se encontró en el DataFrame
+    if not filtered_df.empty:
+        # Ordena el DataFrame filtrado por 'playtime_forever' en orden descendente
+        sorted_df = filtered_df.sort_values(by='playtime_forever', ascending=False)
 
-    return {'user_id': top_5_users_list, 'user_url': top_5_users_url_list}
+        # Toma los primeros 5 usuarios y almacénalos en una lista
+        top_5_users_list = sorted_df.head(5)['user_id'].tolist()
+        top_5_users_url_list = sorted_df.head(5)['user_url'].tolist()
+
+        return {'user_id': top_5_users_list, 'user_url': top_5_users_url_list}
+    else:
+        return "Genero no encontrado"  # Retorna None si el género no se encontró en el archivo CSV
 
 # # Fifth_Function: def developer( desarrollador : str ): Cantidad de items y porcentaje de contenido Free por año
 # #                                según empresa desarrolladora. Ejemplo de salida:
