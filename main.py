@@ -82,13 +82,17 @@ def countreviews (start_date:str, final_date:str):
 @app.get('/genre/{genres}')
 def genre (genres:str):
     # Utiliza explode() para convertir las listas en filas individuales
-    try:
-        genre_convert = genres.lower()
-        filter_third_function = df_third_function['genres'].str.lower() == genre_convert
-        ranking = df_third_function.loc[filter_third_function, 'ranking'].values
+    convert_genre = genres.lower()
+
+    # Filtrar el DataFrame por género
+    filter_third_function = df_third_function['genres'].str.lower() == convert_genre
+
+    # Obtener el ranking si se encuentra el género
+    if filter_third_function.any():
+        ranking = df_third_function.loc[filter_third_function, 'ranking'].iloc[0]
         return {'ranking': ranking}
-    except IndexError:
-        return "Género no encontrado"
+    else:
+        return "Genero no encontrado."
 
 # # Fourth Function: def userforgenre( género : str ): Top 5 de usuarios con más horas de juego en el género dado, 
 # #                  con su URL (del user) y user_id.
