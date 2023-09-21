@@ -6,6 +6,10 @@ from sklearn.metrics.pairwise import cosine_similarity
 #FastAPI
 app = FastAPI()
 
+@app.get("/")
+def root():
+
+    return {"message": "Hola como estas, bienvenido al proyecto numero 1 del Bootcamp de Henry\nAhora"}
 #Carga de los datos
 # Cargar los archivos para la primera funcion
 df_first_function_file_one = pd.read_csv('03_datasets_proyecto_01/first_function_file_one.csv')
