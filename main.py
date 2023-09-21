@@ -83,10 +83,9 @@ def countreviews (start_date:str, final_date:str):
 def genre (genres:str):
     # Utiliza explode() para convertir las listas en filas individuales
     try:
-        genres = genres.lower()
-        df_third_function['genres'] = df_third_function['genres'].str.lower()
-        row = df_third_function[df_third_function['genres'] == genres]
-        ranking = row['ranking'].values[0]
+        genre_convert = genres.lower()
+        filter_third_function = df_third_function['genres'].str.lower() == genre_convert
+        ranking = df_third_function.loc[filter_third_function, 'ranking'].values
         return {'ranking': ranking}
     except IndexError:
         return "Género no encontrado"
