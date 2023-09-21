@@ -100,7 +100,6 @@ def genre (genres:str):
 @app.get('/userforgenre/{genre}')
 def userforgenre(genre:str):
 # Filtra por el género deseado
-    df_fourth_function = pd.read_csv('03_datasets_proyecto_01/fourth_function_file_one.csv')
     genero_buscado = genre.lower()
 
     # Filtrar el DataFrame por género (insensible a mayúsculas/minúsculas)
@@ -124,43 +123,26 @@ def userforgenre(genre:str):
 
 @app.get('/developer/{developer_parameter}')
 def developer(developer_parameter:str):
-    df_developer = df_fifth_function.copy()
-# Filtra el DataFrame por la desarrolladora especificada
-    df_developer = df_developer[df_developer['developer'] == developer_parameter]
+    filtered_df = df_fifth_function[df_fifth_function['developer'] == developer_parameter]
+    # Agrupar por año y contar la cantidad de elementos
+    filtered_df['release_date'] = pd.to_datetime(filtered_df['release_date'])
+    grouped = filtered_df.groupby(filtered_df['release_date'].dt.year)['price'].count().reset_index()
 
-    # Convierte la columna "release_date" a tipo datetime para extraer el año
-    df_developer['release_date'] = pd.to_datetime(df_developer['release_date'])
-    df_developer['year'] = df_developer['release_date'].dt.year
+    # Calcular el porcentaje de contenido Free To Play por año
+    total_items_por_ano = grouped['price'].sum()
+    free_to_play_items_por_ano = filtered_df[filtered_df['price'] == 'Free To Play'].groupby(filtered_df['release_date'].dt.year)['price'].count().reset_index()
+    free_to_play_items_por_ano.rename(columns={'price': 'free_to_play_count'}, inplace=True)
+    merged = pd.merge(grouped, free_to_play_items_por_ano, on='release_date', how='left').fillna(0)
+    merged['porcentaje_free_to_play'] = (merged['free_to_play_count'] / merged['price']) * 100
 
-    # Agrupa por año y calcula la cantidad de filas en la columna "price"
-    grouped = df_developer.groupby('year')
-    count_per_year = grouped['price'].count().reset_index()
+    # Crear el diccionario de resultados
+    final_result = {
+        'year': merged['release_date'].tolist(),
+        'total_items_count': merged['price'].tolist(),
+        'free_to_play_percentage': merged['porcentaje_free_to_play'].tolist()
+    }
 
-    # Filtra las filas donde "price" es igual a "Free To Play"
-    free_to_play_df = df_developer[df_developer['price'] == 'Free To Play']
-
-    # Agrupa las filas de "Free To Play" por año y calcula la cantidad
-    grouped_free_to_play = free_to_play_df.groupby('year')
-    count_free_to_play_per_year = grouped_free_to_play['price'].count().reset_index()
-
-    # Combina las dos tablas en una sola que contenga el recuento total y el recuento de "Free To Play" por año
-    result = pd.merge(count_per_year, count_free_to_play_per_year, on='year', how='left')
-
-    # Renombra las columnas para mayor claridad
-    result.rename(columns={'price_x': 'total', 'price_y': 'free_to_play'}, inplace=True)
-    result['free_to_play'] = result['free_to_play'].fillna(0)
-
-    # Calcula el porcentaje de "Free To Play" en relación al total
-    result['porcentaje_free_to_play'] = (result['free_to_play'] / result['total']) * 100
-
-    data_dict = result.set_index('year')[['total', 'porcentaje_free_to_play']].to_dict(orient='index')
-
-    # Transforma los valores en listas
-    for year, values in data_dict.items():
-        data_dict[year] = [values['total'], values['porcentaje_free_to_play']]
-
-    # Imprime el diccionario resultante
-    return data_dict
+    return final_result
 
 # # Sixth_Function: def sentiment_analysis( año : int ): Según el año de lanzamiento, se devuelve una lista
 #                   con la cantidad de registros de reseñas de usuarios que se encuentren categorizados con
