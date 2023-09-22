@@ -9,8 +9,7 @@ app = FastAPI()
 
 @app.get("/")
 def root():
-    message: print("Hola como estas, bienvenido al proyecto numero 1 del Bootcamp de Henry, para información detallada de funciones agrega a la url /docs")
-    return {"message": message}
+    return {"message": "Hola como estas, bienvenido al proyecto numero 1 del Bootcamp de Henry, para información detallada de funciones agrega a la url /docs"}
 
 #Carga de los datos
 # Cargar los archivos para la primera funcion
