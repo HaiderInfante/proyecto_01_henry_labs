@@ -79,8 +79,9 @@ Nota: Actualmente solo estan siendo consumidas las siguientes funciones:
 ![Screenshot_Prueba](/04_images_proyecto_01/screenshot_sentiment_analysis.png)
 * Séptima funcion (Modelo de Machine Learning): def recomendacion_juego( id de producto ): Ingresando el id de producto, deberíamos recibir una lista con 5 juegos recomendados similares al ingresado.
 ![Screenshot_Prueba](/04_images_proyecto_01/screenshot_get_similar_games.png)
+
 ## Video Explicativo del Proyecto
-El video explicativo del proyecto lo podran encontrar en el siguiente enlace: 
+El video explicativo del proyecto lo podran encontrar en el siguiente enlace: [Click aqui para ver el video](https://drive.google.com/drive/folders/1a1A-WzL5ucw7iMv5r3uZ9SoHzdh1ks8W?usp=sharing)
 
 
 
