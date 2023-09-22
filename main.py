@@ -156,12 +156,17 @@ def developer(developer_parameter:str):
     merged = pd.merge(grouped, free_to_play_items_por_ano, on='release_date', how='left').fillna(0)
     # Calcula el porcentaje de contenido 'Free To Play' en relación al total por año
     merged['porcentaje_free_to_play'] = (merged['free_to_play_count'] / merged['price']) * 100
-    # Crea listas a partir de las columnas 'release_date', 'price', y 'porcentaje_free_to_play'
-    year: merged['release_date'].tolist()
-    total_items_count: merged['price'].tolist()
-    free_to_play_percentage: merged['porcentaje_free_to_play'].tolist()
+    # # Crea un diccionario llamado 'resultado'
+    resultado = {
+        # La clave 'year' se asigna a una lista de los valores en la columna 'release_date' convertidos a una lista
+        'year': merged['release_date'].tolist(),
+        # La clave 'total_items_count' se asigna a una lista de los valores en la columna 'price' convertidos a una lista
+        'total_items_count': merged['price'].tolist(),
+        # La clave 'free_to_play_percentage' se asigna a una lista de los valores en la columna 'porcentaje_free_to_play' convertidos a una lista
+        'free_to_play_percentage': merged['porcentaje_free_to_play'].tolist()
+    }
 
-    return {'year': year, 'total_items_count': total_items_count, 'free_to_play_percentage': free_to_play_percentage}
+    return resultado
 
 # Develop Sixth Function: def sentiment_analysis( año : int ): Según el año de lanzamiento, se devuelve una lista
 #                   con la cantidad de registros de reseñas de usuarios que se encuentren categorizados con
